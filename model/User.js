@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const User = new Schema({
   userId: String,
   rate: Number,
-  slaryList: Array,
+  salaryList: Array,
 });
 
 export default mongoose.model("User", User);
