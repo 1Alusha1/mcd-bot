@@ -1,22 +1,10 @@
 import { Scenes } from "telegraf";
 import messages from "../messages.js";
+import Record from "../model/Record.js";
 import User from "../model/User.js";
-import state from "../state.js";
-const formatDate = (num) => (num < 10 ? "0" + num : num);
-const months = {
-  0: "Январь",
-  1: "Февраль",
-  2: "Март",
-  3: "Апрель",
-  4: "Май",
-  5: "Июнь",
-  6: "Июль",
-  7: "Август",
-  8: "Сентябрь",
-  9: "Октябрь",
-  10: "Ноябырь",
-  11: "Декабырь",
-};
+import state, { months } from "../state.js";
+import { formatDate } from "../use/formatDate.js";
+
 export const setWeekSalary = () => {
   const scene = new Scenes.BaseScene("setWeekSalary");
 
@@ -67,8 +55,11 @@ export const askTotalHours = () => {
       startWeek: state.startWeek,
       totalHour,
       salary: totalHour * user.rate,
+      userId,
     };
-    await user.updateOne({ $push: { salaryList: dto } });
+    const record = new Record(dto);
+    record.save();
+    await user.updateOne({ $push: { salaryList: record._id } });
 
     await ctx.replyWithHTML(
       messages(
